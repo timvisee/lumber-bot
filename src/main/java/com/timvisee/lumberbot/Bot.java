@@ -165,9 +165,10 @@ public class Bot {
                 // Get the next move, and add it to the moves buffer
                 this.movesBuffer.add(isBranchAtBranchPoint());
 
-                // Get the buffered move, and simulate the key presses
-                simulateKeyPressArrow(this.movesBuffer.pop(), 2);
+                // Simulate the next move
+                simulateNextMove();
 
+                // Sleep for a little
                 try {
                     Thread.sleep(150);
                 } catch (InterruptedException e) {
@@ -315,5 +316,13 @@ public class Bot {
 
         // Simulate the key press
         simulateKeyPress(left ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT, count);
+    }
+
+    /**
+     * Simulate the next move.
+     */
+    private void simulateNextMove() {
+        // Get and consume the next move, then simulate it
+        simulateKeyPressArrow(this.movesBuffer.pop(), 2);
     }
 }
