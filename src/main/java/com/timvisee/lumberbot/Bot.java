@@ -61,7 +61,7 @@ public class Bot {
     /**
      * Amount of milliseconds to wait for each move.
      */
-    private static final int MOVE_DELAY = 124;
+    private static final int MOVE_DELAY = 75;
 
     /**
      * Buffer containing the upcoming player moves.
@@ -247,7 +247,16 @@ public class Bot {
      * @return True if there's a branch at the branch point.
      */
     public boolean isBranchAtBranchPoint() {
-        return isBranchAt(this.branchPoint);
+        for (int i = 0; i < 10; i++) {
+             Point p = new Point(this.branchPoint);
+
+             p.y -= i * 3;
+
+             if(isBranchAt(p))
+                 return true;
+        }
+
+        return false;
     }
 
     /**
