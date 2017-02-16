@@ -163,7 +163,18 @@ public class Bot {
                     return;
                 }
 
-                System.out.println("Move your mouse on the wood of the bottom branch, then press ENTER.");
+                // Show status message, go to the next state
+                System.out.println("Make sure the game window is focused, then press ENTER.");
+                this.state = BotState.BEFORE_PLAYING;
+                break;
+
+            case BEFORE_PLAYING:
+                // Break if no action key was pressed
+                if(!consumeActionInvoked())
+                    return;
+
+                // Show status message, go to the next state
+                System.out.println("Playing!");
                 this.state = BotState.PLAYING;
                 break;
 
