@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.timvisee</groupId>
+    <artifactId>lumberbot</artifactId>
+
+    <!-- Bot version -->
+    <version>0.1</version>
+
+    <name>Lumber Bot</name>
+    <description>Simple Lumber game bot</description>
+    <inceptionYear>2011</inceptionYear>
+    <url>https://timvisee.com/</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/timvisee/lumber-bot.git</connection>
+        <developerConnection>scm:git:git@github.com:timvisee/lumber-bot.git</developerConnection>
+        <url>https://github.com/timvisee/lumber-bot</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/timvisee/lumber-bot/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>The GNU General Public Licence version 3 (GPLv3)</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- Plugin version code (corresponds to version tag above) -->
+        <project.versionCode>36</project.versionCode>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Java compiler version (JDK) -->
+        <javaVersion>1.8</javaVersion>
+
+        <!-- Output properties -->
+        <project.outputName>lumber-bot</project.outputName>
+        <project.finalName>${project.outputName}-${project.version}</project.finalName>
+
+    </properties>
+
+    <build>
+        <finalName>${project.finalName}-noshade</finalName>
+
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources/</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- Maven Java compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>${javaVersion}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
