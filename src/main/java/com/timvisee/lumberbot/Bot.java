@@ -59,9 +59,9 @@ public class Bot {
     private static final int KEY_PRESS_DURATION = 20;
 
     /**
-     * Buffer containing the directions move the player to.
+     * Buffer containing the upcoming player moves.
      */
-    private LinkedList<Boolean> directionBuffer = new LinkedList<>();
+    private LinkedList<Boolean> movesBuffer = new LinkedList<>();
 
     /**
      * Constructor.
@@ -80,8 +80,8 @@ public class Bot {
         // Register the key listener
         GlobalScreen.addNativeKeyListener(new KeyListener(this));
 
-        // Fill the direction buffer with some initial moves
-        this.directionBuffer.add(true);
+        // Add an initial move for the player
+        this.movesBuffer.add(true);
 
         // Create a thread to run the bot in
         final Thread botThread = new Thread(new Runnable() {
@@ -163,10 +163,10 @@ public class Bot {
 
             case PLAYING:
                 // Get the next move, and add it to the moves buffer
-                this.directionBuffer.add(isBranchAtBranchPoint());
+                this.movesBuffer.add(isBranchAtBranchPoint());
 
                 // Get the buffered move, and simulate the key presses
-                simulateKeyPressArrow(this.directionBuffer.pop(), 2);
+                simulateKeyPressArrow(this.movesBuffer.pop(), 2);
 
                 try {
                     Thread.sleep(150);
