@@ -61,7 +61,7 @@ public class Bot {
     /**
      * Amount of milliseconds to wait for each move.
      */
-    private static final int MOVE_DELAY = 125;
+    private static final int MOVE_DELAY = 124;
 
     /**
      * Buffer containing the upcoming player moves.
