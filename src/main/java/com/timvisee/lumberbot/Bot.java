@@ -125,6 +125,7 @@ public class Bot {
         switch(this.state) {
             case INIT:
                 // Show an introduction message
+                System.out.println("Press ESCAPE to stop the bot.");
                 System.out.println("Move your mouse on the tree, then press ENTER. (not a branch)");
                 this.state = BotState.SELECT_TREE;
                 break;
@@ -170,8 +171,8 @@ public class Bot {
                 // Make sure the tree is still here
                 if(!isBranchAtTreePoint()) {
                     // Show a status message
-                    System.out.println("You've died!");
-                    requestStop();
+                    System.out.println("You've died!\n");
+                    this.state = BotState.INIT;
                     return;
                 }
 
