@@ -59,6 +59,11 @@ public class Bot {
     private static final int KEY_PRESS_DURATION = 20;
 
     /**
+     * Amount of milliseconds to wait for each move.
+     */
+    private static final int MOVE_DELAY = 125;
+
+    /**
      * Buffer containing the upcoming player moves.
      */
     private LinkedList<Boolean> movesBuffer = new LinkedList<>();
@@ -162,15 +167,15 @@ public class Bot {
                 break;
 
             case PLAYING:
-                // Get the next move, and add it to the moves buffer
-                this.movesBuffer.add(isBranchAtBranchPoint());
+                // Buffer the next move
+                bufferNextMove();
 
                 // Simulate the next move
                 simulateNextMove();
 
                 // Sleep for a little
                 try {
-                    Thread.sleep(150);
+                    Thread.sleep(MOVE_DELAY);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -219,6 +224,23 @@ public class Bot {
      */
     public boolean isBranchAtBranchPoint() {
         return isBranchAt(this.branchPoint);
+    }
+
+    /**
+     * Determine what buffered move to do.
+     * This will check if there's any branch at the branch position, and it will determine a next move on this accordingly.
+     *
+     * @return Determine what buffered move to do.
+     */
+    public boolean determineBufferedMove() {
+        return ((isBranchAtBranchPoint() ? 1 : 0) + (isBranchPointLeft() ? 1 : 0)) % 2 == 1;
+    }
+
+    /**
+     * Determine what move to do next, and add it to the moves buffer.
+     */
+    public void bufferNextMove() {
+        this.movesBuffer.add(determineBufferedMove());
     }
 
     /**
@@ -281,6 +303,15 @@ public class Bot {
      */
     public boolean isRequestStop() {
         return this.requestStop;
+    }
+
+    /**
+     * Check whether the selected branch point is on the left side of the tree.
+     *
+     * @return True if the point is left, false if the point is right.
+     */
+    public boolean isBranchPointLeft() {
+        return this.branchPoint.x <= this.treePoint.x;
     }
 
     /**
