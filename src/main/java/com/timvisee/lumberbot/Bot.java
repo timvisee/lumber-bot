@@ -4,6 +4,7 @@ import org.jnativehook.GlobalScreen;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 
 public class Bot {
 
@@ -58,6 +59,11 @@ public class Bot {
     private static final int KEY_PRESS_DURATION = 20;
 
     /**
+     * Buffer containing the directions move the player to.
+     */
+    private LinkedList<Boolean> directionBuffer = new LinkedList<>();
+
+    /**
      * Constructor.
      */
     public Bot() {}
@@ -73,6 +79,9 @@ public class Bot {
 
         // Register the key listener
         GlobalScreen.addNativeKeyListener(new KeyListener(this));
+
+        // Fill the direction buffer with some initial moves
+        this.directionBuffer.add(true);
 
         // Create a thread to run the bot in
         final Thread botThread = new Thread(new Runnable() {
@@ -149,9 +158,21 @@ public class Bot {
                 }
 
                 System.out.println("Move your mouse on the wood of the bottom branch, then press ENTER.");
+                this.state = BotState.PLAYING;
                 break;
 
             case PLAYING:
+                // Get the next move, and add it to the moves buffer
+                this.directionBuffer.add(isBranchAtBranchPoint());
+
+                // Get the buffered move, and simulate the key presses
+                simulateKeyPressArrow(this.directionBuffer.pop(), 2);
+
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case DONE:
@@ -188,6 +209,15 @@ public class Bot {
      */
     public boolean isBranchAt(Point point) {
         return isBranchColor(getColorAt(point));
+    }
+
+    /**
+     * Check whether there's a branch at the branch point.
+     *
+     * @return True if there's a branch at the branch point.
+     */
+    public boolean isBranchAtBranchPoint() {
+        return isBranchAt(this.branchPoint);
     }
 
     /**
@@ -280,6 +310,10 @@ public class Bot {
      * @param count Amount of times to press the key.
      */
     public void simulateKeyPressArrow(boolean left, int count) {
+        // Show a status message
+        System.out.println("Moving: " + (left ? "Left" : "Right"));
+
+        // Simulate the key press
         simulateKeyPress(left ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT, count);
     }
 
