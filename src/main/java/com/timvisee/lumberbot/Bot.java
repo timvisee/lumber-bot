@@ -37,9 +37,25 @@ public class Bot {
      */
     public Point branchPoint;
 
+    /**
+     * Maximum value of red for a branch color.
+     */
     private static final int COLOR_BRANCH_MAX_RED = 186;
+
+    /**
+     * Maximum value of green for a branch color.
+     */
     private static final int COLOR_BRANCH_MAX_GREEN = 140;
+
+    /**
+     * Maximum value of blue for a branch color.
+     */
     private static final int COLOR_BRANCH_MAX_BLUE = 77;
+
+    /**
+     * Key press duration for simulated keys, in milliseconds.
+     */
+    private static final int KEY_PRESS_DURATION = 20;
 
     /**
      * Constructor.
@@ -234,6 +250,37 @@ public class Bot {
      */
     public boolean isRequestStop() {
         return this.requestStop;
+    }
+
+    /**
+     * Simulate a key press for the given key.
+     *
+     * @param keyCode Key code of the key to press.
+     * @param count Amount of times to press the key.
+     */
+    public void simulateKeyPress(int keyCode, int count) {
+        try {
+            // Loop through the key count
+            for (int i = 0; i < count; i++) {
+                this.robot.keyPress(keyCode);
+                Thread.sleep(KEY_PRESS_DURATION);
+                this.robot.keyRelease(keyCode);
+                Thread.sleep(KEY_PRESS_DURATION);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Simulate a key press for an arrow key.
+     *
+     * @param left True if it's the left arrow, false if it's the right.
+     * @param count Amount of times to press the key.
+     */
+    public void simulateKeyPressArrow(boolean left, int count) {
+        simulateKeyPress(left ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT, count);
     }
 
 
