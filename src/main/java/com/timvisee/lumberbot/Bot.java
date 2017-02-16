@@ -167,6 +167,14 @@ public class Bot {
                 break;
 
             case PLAYING:
+                // Make sure the tree is still here
+                if(!isBranchAtTreePoint()) {
+                    // Show a status message
+                    System.out.println("You've died!");
+                    requestStop();
+                    return;
+                }
+
                 // Buffer the next move
                 bufferNextMove();
 
@@ -224,6 +232,15 @@ public class Bot {
      */
     public boolean isBranchAtBranchPoint() {
         return isBranchAt(this.branchPoint);
+    }
+
+    /**
+     * Check whether there's a branch/tree at the tree position.
+     *
+     * @return True if there's a branch/tree, false if not.
+     */
+    public boolean isBranchAtTreePoint() {
+        return isBranchAt(this.treePoint);
     }
 
     /**
