@@ -5,8 +5,16 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 public class KeyListener implements NativeKeyListener {
 
+    /**
+     * Related bot instance.
+     */
     private Bot bot;
 
+    /**
+     * Constructor.
+     *
+     * @param bot Bot instance.
+     */
     public KeyListener(Bot bot) {
         this.bot = bot;
     }
@@ -16,11 +24,17 @@ public class KeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if(e.getKeyCode() == NativeKeyEvent.VC_S) {
-            System.out.println("Action key pressed!");
-
-            bot.notifyAll();
+        // Handle the escape key
+        if(e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
+            // Request to stop the bot
+            bot.requestStop();
+            return;
         }
+
+        // Handle the action key
+        if(e.getKeyCode() == NativeKeyEvent.VC_ENTER)
+            // Invoke the action
+            bot.invokeAction();
     }
 
     @Override

@@ -3,19 +3,25 @@ package com.timvisee.lumberbot;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
+import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Main {
 
     public static void main(String[] args) throws NativeHookException, InterruptedException {
-        // Register the native hook
-//        GlobalScreen.registerNativeHook();
+        // Register the native hook, and disable it's logging
+        GlobalScreen.registerNativeHook();
+        Logger.getLogger(GlobalScreen.class.getPackage().getName()).setLevel(Level.OFF);
 
         // Create a bot instance
         Bot bot = new Bot();
 
-        // Register the key listener
-//        GlobalScreen.addNativeKeyListener(new KeyListener(bot));
-
         // Initialize the bot
-        bot.init();
+        try {
+            bot.start();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
     }
 }
