@@ -85,9 +85,6 @@ public class Bot {
         // Register the key listener
         GlobalScreen.addNativeKeyListener(new KeyListener(this));
 
-        // Add an initial move for the player
-        this.movesBuffer.add(true);
-
         // Create a thread to run the bot in
         final Thread botThread = new Thread(new Runnable() {
             @Override
@@ -176,6 +173,13 @@ public class Bot {
                 // Show status message, go to the next state
                 System.out.println("Playing!");
                 this.state = BotState.PLAYING;
+
+                // Press the spacebar to start a new game
+                simulateKeyPress(KeyEvent.VK_SPACE, 1, 100);
+
+                // Add an initial move for the player
+                this.movesBuffer.clear();
+                this.movesBuffer.add(true);
                 break;
 
             case PLAYING:
@@ -183,7 +187,7 @@ public class Bot {
                 if(!isBranchAtTreePoint()) {
                     // Show a status message
                     System.out.println("You've died!\n");
-                    this.state = BotState.INIT;
+                    this.state = BotState.BEFORE_PLAYING;
                     return;
                 }
 
@@ -350,13 +354,24 @@ public class Bot {
      * @param count Amount of times to press the key.
      */
     public void simulateKeyPress(int keyCode, int count) {
+        simulateKeyPress(keyCode, count, KEY_PRESS_DURATION);
+    }
+
+    /**
+     * Simulate a key press for the given key.
+     *
+     * @param keyCode Key code of the key to press.
+     * @param count Amount of times to press the key.
+     * @param delay Delay in milliseconds.
+     */
+    public void simulateKeyPress(int keyCode, int count, int delay) {
         try {
             // Loop through the key count
             for (int i = 0; i < count; i++) {
                 this.robot.keyPress(keyCode);
-                Thread.sleep(KEY_PRESS_DURATION);
+                Thread.sleep(delay);
                 this.robot.keyRelease(keyCode);
-                Thread.sleep(KEY_PRESS_DURATION);
+                Thread.sleep(delay);
             }
 
         } catch (InterruptedException e) {
