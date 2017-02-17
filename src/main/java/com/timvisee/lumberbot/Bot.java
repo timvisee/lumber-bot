@@ -207,21 +207,25 @@ public class Bot {
                 System.out.println("Scanning branch thickness...");
 
                 // Determine the size of the branch
-                int branchTop = -20;
-                int branchBottom = 20;
-                for (int i = 0; i < 20; i++) {
+                int branchMax = 0;
+                int branchMin = 0;
+                for (int i = 0; i < 25; i++) {
                     if(!isBranchColor(robot.getPixelColor(this.branchPoint.x, this.branchPoint.y + i))) {
-                        branchBottom = i - 1;
+                        branchMax = this.branchPoint.y + i - 1;
                         break;
                     }
                 }
-                for (int i = 0; i > -20; i--) {
+                for (int i = 0; i > -25; i--) {
                     if(!isBranchColor(robot.getPixelColor(this.branchPoint.x, this.branchPoint.y + i))) {
-                        branchTop = i + 1;
+                        branchMin = this.branchPoint.y + i + 1;
                         break;
                     }
                 }
-                branchThickness = branchBottom - branchTop;
+                branchThickness = branchMax - branchMin;
+
+                // Resetting scanning point to the middle of the branch
+                System.out.println("Setting scan point to middle of branch...");
+                this.branchPoint.setLocation(this.branchPoint.x, branchMin + (branchMax - branchMin) / 2);
 
                 // Determine the position of branches on the other side of the tree, show a status message
                 System.out.println("Scanning for branch on other side of tree...");
@@ -233,7 +237,7 @@ public class Bot {
                     // Determine whether there's a branch there
                     if (!isBranchColor(robot.getPixelColor(x, this.branchPoint.y))) {
                         // Set the other branch point
-                        this.otherBranchPoint = new Point(x, this.branchPoint.y);
+                        this.otherBranchPoint = new Point(x, this.branchPoint.y + (25 * sideMultiplier));
 
                         // Show a status message, and break
                         System.out.println("Other side found.");
