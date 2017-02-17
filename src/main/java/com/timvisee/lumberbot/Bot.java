@@ -288,7 +288,7 @@ public class Bot {
                     Thread.sleep(currentMoveDelay);
 
                     // Decrease or increase the move delay based on the last deviation
-                    if(lastDeviation <= 55)
+                    if(lastDeviation <= 50)
                         currentMoveDelay = Math.max(currentMoveDelay - 1, MOVE_DELAY_MIN);
                     else
                         currentMoveDelay = currentMoveDelay + 1;
