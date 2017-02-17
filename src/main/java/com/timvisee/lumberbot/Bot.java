@@ -1,9 +1,11 @@
 package com.timvisee.lumberbot;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jnativehook.GlobalScreen;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 public class Bot {
@@ -56,12 +58,43 @@ public class Bot {
     /**
      * Key press duration for simulated keys, in milliseconds.
      */
-    private static final int KEY_PRESS_DURATION = 20;
+    private static final int KEY_PRESS_DURATION = 10;
 
     /**
      * Amount of milliseconds to wait for each move.
      */
-    private static final int MOVE_DELAY = 75;
+    private static final int MOVE_DELAY = 150;
+
+    /**
+     * Minimum amount of milliseconds to wait for each move.
+     */
+    private static final int MOVE_DELAY_MIN = 15;
+
+    /**
+     * Current delay between moves, in milliseconds.
+     */
+    private int currentMoveDelay = 0;
+
+    /**
+     * Offset of the last branch.
+     */
+    private int lastBranchOffset = 0;
+
+    /**
+     * Last deviation in branch positions.
+     */
+    private int lastDeviation = 0;
+
+    /**
+     * Queue of the last branch offsets.
+     * Used to determine the average offset and deviation.
+     */
+    private CircularFifoQueue<Integer> branchOffsetQueue = new CircularFifoQueue<>(10);
+
+    /**
+     * Thickness of the branch.
+     */
+    private int branchThickness = 0;
 
     /**
      * Buffer containing the upcoming player moves.
@@ -160,6 +193,29 @@ public class Bot {
                     return;
                 }
 
+                // Show a status message
+                System.out.println("Scanning branch thickness...");
+
+                // Determine the size of the branch
+                int branchTop = -20;
+                int branchBottom = 20;
+                for (int i = 0; i < 20; i++) {
+                    if(!isBranchColor(robot.getPixelColor(this.branchPoint.x, this.branchPoint.y + i))) {
+                        branchBottom = i - 1;
+                        break;
+                    }
+                }
+                for (int i = 0; i > -20; i--) {
+                    if(!isBranchColor(robot.getPixelColor(this.branchPoint.x, this.branchPoint.y + i))) {
+                        branchTop = i + 1;
+                        break;
+                    }
+                }
+                branchThickness = branchBottom - branchTop;
+
+                // Show a status message with the branch thickness
+                System.out.println("Branch thickness: " + branchThickness + " pixels");
+
                 // Show status message, go to the next state
                 System.out.println("Make sure the game window is focused, then press ENTER.");
                 this.state = BotState.BEFORE_PLAYING;
@@ -176,6 +232,13 @@ public class Bot {
 
                 // Press the spacebar to start a new game
                 simulateKeyPress(KeyEvent.VK_SPACE, 1, 100);
+
+                // Reset the move delay and offset
+                currentMoveDelay = MOVE_DELAY;
+                lastBranchOffset = 0;
+
+                // Clear the branch offset queue
+                branchOffsetQueue.clear();
 
                 // Add an initial move for the player
                 this.movesBuffer.clear();
@@ -197,9 +260,16 @@ public class Bot {
                 // Simulate the next move
                 simulateNextMove();
 
-                // Sleep for a little
                 try {
-                    Thread.sleep(MOVE_DELAY);
+                    // Sleep for a little
+                    Thread.sleep(currentMoveDelay);
+
+                    // Decrease or increase the move delay based on the last deviation
+                    if(lastDeviation <= 55)
+                        currentMoveDelay = Math.max(currentMoveDelay - 1, MOVE_DELAY_MIN);
+                    else
+                        currentMoveDelay = currentMoveDelay + 1;
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -247,15 +317,59 @@ public class Bot {
      * @return True if there's a branch at the branch point.
      */
     public boolean isBranchAtBranchPoint() {
-        for (int i = 0; i < 10; i++) {
-             Point p = new Point(this.branchPoint);
+        // Constant holding the scanning area size
+        final int scanningSize = 80;
 
-             p.y -= i * 3;
+        // Get the offset average, minimum and maximum from the queue
+        int offsetAverage = 0;
+        int min = -1;
+        int max = -1;
+        for (Integer entry : branchOffsetQueue) {
+            // Append the value to the average counter
+            offsetAverage += entry;
 
-             if(isBranchAt(p))
-                 return true;
+            // Update the minimum and maximum
+            min = Math.min(entry, min);
+            max = Math.max(entry, max);
+
+            // Set the initial value
+            if(min < 0)
+                min = entry;
+        }
+        if(branchOffsetQueue.size() > 0)
+            offsetAverage = (int) ((float) offsetAverage / (float) branchOffsetQueue.size());
+
+        // Store the deviation
+        lastDeviation = max - min;
+
+        // Determine what screen offset to use for the image data
+        int screenOffset = Math.max(offsetAverage - 30, 0);
+
+        // Fetch a screen image containing the pixel data we need
+        BufferedImage img = robot.createScreenCapture(new Rectangle(this.branchPoint.x, this.branchPoint.y - scanningSize - screenOffset, 1, 80));
+
+        // Loop through the positions the branch might be at
+        for (int i = scanningSize - 1; i >= 0; i -= branchThickness) {
+            // Get the color of the current pixel
+            Color pixelColor = new Color(img.getRGB(0, i));
+
+            // Check whether there's a branch at the current position, return true if that's the case
+            if(isBranchColor(pixelColor)) {
+                // Update the last branch offset
+                lastBranchOffset = (scanningSize - i) + screenOffset;
+
+                // Queue the branch offset
+                branchOffsetQueue.add(lastBranchOffset);
+
+                // Print a status message
+                System.out.println("PRECISION INFO: delay: " + currentMoveDelay + ", deviation: " + lastDeviation + ", offset: " + screenOffset + ", avg: " + offsetAverage + ", last: " + lastBranchOffset);
+
+                // Return the result
+                return true;
+            }
         }
 
+        // No branch found, return false
         return false;
     }
 
