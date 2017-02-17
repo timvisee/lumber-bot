@@ -41,6 +41,11 @@ public class Bot {
     public Point branchPoint;
 
     /**
+     * Branch scanning point on the other side of the tree.
+     */
+    public Point otherBranchPoint;
+
+    /**
      * Maximum value of red for a branch color.
      */
     private static final int COLOR_BRANCH_MAX_RED = 186;
@@ -213,6 +218,24 @@ public class Bot {
                 }
                 branchThickness = branchBottom - branchTop;
 
+                // Determine the position of branches on the other side of the tree, show a status message
+                System.out.println("Scanning for branch on other side of tree...");
+                int sideMultiplier = isBranchPointLeft() ? 1 : -1;
+                for (int i = 0; i < 300; i++) {
+                    // Determine the x coordinate
+                    final int x = this.branchPoint.x + (i * sideMultiplier);
+
+                    // Determine whether there's a branch there
+                    if (!isBranchColor(robot.getPixelColor(x, this.branchPoint.y))) {
+                        // Set the other branch point
+                        this.otherBranchPoint = new Point(x, this.branchPoint.y);
+
+                        // Show a status message, and break
+                        System.out.println("Other side found.");
+                        break;
+                    }
+                }
+
                 // Show a status message with the branch thickness
                 System.out.println("Branch thickness: " + branchThickness + " pixels");
 
@@ -230,7 +253,7 @@ public class Bot {
                 System.out.println("Playing!");
                 this.state = BotState.PLAYING;
 
-                // Press the spacebar to start a new game
+                // Press the space key to start a new game
                 simulateKeyPress(KeyEvent.VK_SPACE, 1, 100);
 
                 // Reset the move delay and offset
@@ -351,7 +374,7 @@ public class Bot {
         // Loop through the positions the branch might be at
         for (int i = scanningSize - 1; i >= 0; i -= branchThickness) {
             // Get the color of the current pixel
-            Color pixelColor = new Color(img.getRGB(0, i));
+            final Color pixelColor = new Color(img.getRGB(0, i));
 
             // Check whether there's a branch at the current position, return true if that's the case
             if(isBranchColor(pixelColor)) {
@@ -362,7 +385,7 @@ public class Bot {
                 branchOffsetQueue.add(lastBranchOffset);
 
                 // Print a status message
-                System.out.println("PRECISION INFO: delay: " + currentMoveDelay + ", deviation: " + lastDeviation + ", offset: " + screenOffset + ", avg: " + offsetAverage + ", last: " + lastBranchOffset);
+                System.out.println("INFO: delay: " + currentMoveDelay + ", deviation: " + lastDeviation + ", offset: " + screenOffset + ", avg: " + offsetAverage + ", last: " + lastBranchOffset);
 
                 // Return the result
                 return true;
@@ -510,7 +533,7 @@ public class Bot {
      */
     public void simulateKeyPressArrow(boolean left, int count) {
         // Show a status message
-        System.out.println("Moving: " + (left ? "Left" : "Right"));
+        System.out.println("MOVE: " + (left ? "Left" : "Right"));
 
         // Simulate the key press
         simulateKeyPress(left ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT, count);
