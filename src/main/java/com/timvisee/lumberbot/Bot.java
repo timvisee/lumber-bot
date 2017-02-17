@@ -237,7 +237,7 @@ public class Bot {
                     // Determine whether there's a branch there
                     if (!isBranchColor(robot.getPixelColor(x, this.branchPoint.y))) {
                         // Set the other branch point
-                        this.otherBranchPoint = new Point(x, this.branchPoint.y + (25 * sideMultiplier));
+                        this.otherBranchPoint = new Point(x + (25 * sideMultiplier), this.branchPoint.y);
 
                         // Show a status message, and break
                         System.out.println("Other side found.");
@@ -399,7 +399,7 @@ public class Bot {
         BufferedImage img = robot.createScreenCapture(new Rectangle(this.branchPoint.x, this.branchPoint.y - scanningSize - screenOffset, 1, 80));
 
         // Loop through the positions the branch might be at
-        for (int i = scanningSize - 1; i >= 0; i -= branchThickness / 2) {
+        for (int i = scanningSize - 1; i >= 0; i -= Math.max(branchThickness / 2, 10)) {
             // Get the color of the current pixel
             final Color pixelColor = new Color(img.getRGB(0, i));
 
@@ -423,7 +423,7 @@ public class Bot {
         img = robot.createScreenCapture(new Rectangle(this.otherBranchPoint.x, this.otherBranchPoint.y - scanningSize - screenOffset, 1, 80));
 
         // Loop through the positions the branch might be at
-        for (int i = scanningSize - 1; i >= 0; i -= branchThickness / 2) {
+        for (int i = scanningSize - 1; i >= 0; i -= Math.max(branchThickness / 2, 10)) {
             // Get the color of the current pixel
             final Color pixelColor = new Color(img.getRGB(0, i));
 
