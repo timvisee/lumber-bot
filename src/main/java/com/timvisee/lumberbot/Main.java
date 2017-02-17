@@ -11,8 +11,8 @@ public class Main {
 
     public static void main(String[] args) throws NativeHookException, InterruptedException {
         // Register the native hook, and disable it's logging
-        GlobalScreen.registerNativeHook();
         Logger.getLogger(GlobalScreen.class.getPackage().getName()).setLevel(Level.OFF);
+        GlobalScreen.registerNativeHook();
 
         // Create a bot instance
         Bot bot = new Bot();
