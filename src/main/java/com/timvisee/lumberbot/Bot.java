@@ -274,6 +274,7 @@ public class Bot {
                     // Show a status message
                     System.out.println("You've died!\n");
                     System.out.println("Press ENTER to automatically restart the game.");
+                    System.out.println("Press ESCAPE stop the bot.");
                     this.state = BotState.BEFORE_PLAYING;
                     return;
                 }
@@ -290,7 +291,7 @@ public class Bot {
 
                     // Decrease or increase the move delay based on the last deviation
                     if(lastDeviation <= 45)
-                        currentMoveDelay = Math.max(currentMoveDelay - (currentMoveDelay > 60 ? 2 : 1), MOVE_DELAY_MIN);
+                        currentMoveDelay = Math.max(currentMoveDelay - (currentMoveDelay > 60 ? 3 : 1), MOVE_DELAY_MIN);
                     else
                         currentMoveDelay++;
 
@@ -367,7 +368,7 @@ public class Bot {
         lastDeviation = max - min;
 
         // Determine what screen offset to use for the image data
-        int screenOffset = Math.max(offsetAverage - 30, 0);
+        int screenOffset = Math.max(offsetAverage - 40, 0);
 
         // Fetch a screen image containing the pixel data we need
         BufferedImage img = robot.createScreenCapture(new Rectangle(this.branchPoint.x, this.branchPoint.y - scanningSize - screenOffset, 1, 80));
