@@ -392,6 +392,28 @@ public class Bot {
             }
         }
 
+        // Fetch a screen image containing the pixel data we need from the other side
+        img = robot.createScreenCapture(new Rectangle(this.otherBranchPoint.x, this.otherBranchPoint.y - scanningSize - screenOffset, 1, 80));
+
+        // Loop through the positions the branch might be at
+        for (int i = scanningSize - 1; i >= 0; i -= branchThickness) {
+            // Get the color of the current pixel
+            final Color pixelColor = new Color(img.getRGB(0, i));
+
+            // Check whether there's a branch at the current position, return true if that's the case
+            if(isBranchColor(pixelColor)) {
+                // Update the last branch offset
+                lastBranchOffset = (scanningSize - i) + screenOffset;
+
+                // Queue the branch offset
+                branchOffsetQueue.add(lastBranchOffset);
+
+                // Print a status message
+                System.out.println("INFO: delay: " + currentMoveDelay + ", deviation: " + lastDeviation + ", offset: " + screenOffset + ", avg: " + offsetAverage + ", last: " + lastBranchOffset);
+                break;
+            }
+        }
+
         // No branch found, return false
         return false;
     }
