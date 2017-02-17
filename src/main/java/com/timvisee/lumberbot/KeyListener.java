@@ -35,6 +35,11 @@ public class KeyListener implements NativeKeyListener {
         if(e.getKeyCode() == NativeKeyEvent.VC_ENTER)
             // Invoke the action
             bot.invokeAction();
+
+        // Handle the auto restart key
+        if(e.getKeyCode() == NativeKeyEvent.VC_A)
+            // Toggle auto restart
+            bot.toggleAutoRestart();
     }
 
     @Override

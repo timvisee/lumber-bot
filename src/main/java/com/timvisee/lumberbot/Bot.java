@@ -107,6 +107,11 @@ public class Bot {
     private LinkedList<Boolean> movesBuffer = new LinkedList<>();
 
     /**
+     * True to automatically restart after playing. False otherwise.
+     */
+    private boolean autoRestart = false;
+
+    /**
      * Constructor.
      */
     public Bot() {}
@@ -273,8 +278,24 @@ public class Bot {
                 if(!isBranchAtTreePoint()) {
                     // Show a status message
                     System.out.println("You've died!\n");
-                    System.out.println("Press ENTER to automatically restart the game.");
                     System.out.println("Press ESCAPE stop the bot.");
+
+                    if(!isAutoRestart())
+                        System.out.println("Press ENTER to restart the game, press A to toggle auto restart.");
+                    else {
+                        // Show a status message and wait 2 seconds
+                        System.out.println("Automatically restarting in 2 seconds, press A to toggle auto restart.");
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Invoke a new action to automatically restart
+                        invokeAction();
+                    }
+
+                    // Set the new state
                     this.state = BotState.BEFORE_PLAYING;
                     return;
                 }
@@ -569,5 +590,25 @@ public class Bot {
     private void simulateNextMove() {
         // Get and consume the next move, then simulate it
         simulateKeyPressArrow(this.movesBuffer.pop(), 2);
+    }
+
+    /**
+     * Check whether auto restart is enabled.
+     *
+     * @return True if auto restart is enabled, false if not.
+     */
+    public boolean isAutoRestart() {
+        return this.autoRestart;
+    }
+
+    /**
+     * Toggle the auto restart mode.
+     */
+    public void toggleAutoRestart() {
+        // Set the new mode
+        this.autoRestart = !this.autoRestart;
+
+        // Show a status message
+        System.out.println((this.autoRestart ? "Enabled" : "Disabled") + " auto restart mode, press A to toggle.");
     }
 }
