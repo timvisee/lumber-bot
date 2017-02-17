@@ -249,12 +249,12 @@ public class Bot {
                 if(!consumeActionInvoked())
                     return;
 
+                // Press the space key to start a new game
+                simulateKeyPress(KeyEvent.VK_SPACE, 1, 200);
+
                 // Show status message, go to the next state
                 System.out.println("Playing!");
                 this.state = BotState.PLAYING;
-
-                // Press the space key to start a new game
-                simulateKeyPress(KeyEvent.VK_SPACE, 1, 100);
 
                 // Reset the move delay and offset
                 currentMoveDelay = MOVE_DELAY;
@@ -273,6 +273,7 @@ public class Bot {
                 if(!isBranchAtTreePoint()) {
                     // Show a status message
                     System.out.println("You've died!\n");
+                    System.out.println("Press ENTER to automatically restart the game.");
                     this.state = BotState.BEFORE_PLAYING;
                     return;
                 }
@@ -288,10 +289,10 @@ public class Bot {
                     Thread.sleep(currentMoveDelay);
 
                     // Decrease or increase the move delay based on the last deviation
-                    if(lastDeviation <= 50)
-                        currentMoveDelay = Math.max(currentMoveDelay - 1, MOVE_DELAY_MIN);
+                    if(lastDeviation <= 45)
+                        currentMoveDelay = Math.max(currentMoveDelay - (currentMoveDelay > 60 ? 2 : 1), MOVE_DELAY_MIN);
                     else
-                        currentMoveDelay = currentMoveDelay + 1;
+                        currentMoveDelay++;
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -372,7 +373,7 @@ public class Bot {
         BufferedImage img = robot.createScreenCapture(new Rectangle(this.branchPoint.x, this.branchPoint.y - scanningSize - screenOffset, 1, 80));
 
         // Loop through the positions the branch might be at
-        for (int i = scanningSize - 1; i >= 0; i -= branchThickness) {
+        for (int i = scanningSize - 1; i >= 0; i -= branchThickness / 2) {
             // Get the color of the current pixel
             final Color pixelColor = new Color(img.getRGB(0, i));
 
@@ -396,7 +397,7 @@ public class Bot {
         img = robot.createScreenCapture(new Rectangle(this.otherBranchPoint.x, this.otherBranchPoint.y - scanningSize - screenOffset, 1, 80));
 
         // Loop through the positions the branch might be at
-        for (int i = scanningSize - 1; i >= 0; i -= branchThickness) {
+        for (int i = scanningSize - 1; i >= 0; i -= branchThickness / 2) {
             // Get the color of the current pixel
             final Color pixelColor = new Color(img.getRGB(0, i));
 
