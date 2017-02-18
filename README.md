@@ -14,5 +14,18 @@ Bot for the LumberJack game in Telegram.
 * Watch the bot complete the game.
 * Press **A** to toggle auto replay after dying.
 
+## Requirements
+Compilation:
+- Java development kit (JDK) 1.8
+- Maven
+- Git (Optional)
+
+Running:
+- Java 1.8 or higher
+
+## Project compilation
+* Clone the project. (`git clone https://github.com/timvisee/lumber-bot.git`)
+* Build the project through Maven. (`mvn clean install -B`)
+
 ## License
 This project is released under the GNU GPL-3.0 license. Check out the [LICENSE](LICENSE) file for more information.
