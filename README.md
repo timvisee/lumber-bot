@@ -1,3 +1,5 @@
+[![Build Status on Travis CI](https://travis-ci.org/timvisee/lumber-bot.svg?branch=master)](https://travis-ci.org/timvisee/lumber-bot)
+
 # Lumber Bot
 Bot for the Lumber game.
 
