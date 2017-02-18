@@ -346,9 +346,6 @@ public class Bot {
                     e.printStackTrace();
                 }
                 break;
-
-            case DONE:
-                break;
         }
     }
 

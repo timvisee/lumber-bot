@@ -25,10 +25,5 @@ public enum BotState {
     /**
      * State the bot is playing in.
      */
-    PLAYING,
-
-    /**
-     * Final state, where the bot is finished.
-     */
-    DONE;
+    PLAYING;
 }
