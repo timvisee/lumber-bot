@@ -88,7 +88,7 @@ public class Bot {
     /**
      * Minimum amount of milliseconds to wait for each move.
      */
-    private static final int MOVE_DELAY_MIN = 15;
+    private static final int MOVE_DELAY_MIN = 20;
 
     /**
      * Current delay between moves, in milliseconds.
@@ -109,7 +109,7 @@ public class Bot {
      * Queue of the last branch offsets.
      * Used to determine the average offset and deviation.
      */
-    private CircularFifoQueue<Integer> branchOffsetQueue = new CircularFifoQueue<>(10);
+    private CircularFifoQueue<Integer> branchOffsetQueue = new CircularFifoQueue<>(9);
 
     /**
      * Thickness of the branch.
@@ -322,17 +322,24 @@ public class Bot {
                 // Buffer the next move
                 bufferNextMove();
 
+                try {
+                    // Sleep for a little
+                    Thread.sleep(currentMoveDelay / 2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 // Simulate the next move
                 simulateNextMove();
 
                 try {
                     // Sleep for a little
-                    Thread.sleep(currentMoveDelay);
+                    Thread.sleep(currentMoveDelay / 2);
 
                     // Decrease or increase the move delay based on the last deviation
-                    if((lastDeviation < 40 && currentMoveDelay >= 35) || lastDeviation <= 15)
+                    if((lastDeviation < 50 && currentMoveDelay >= 40) || (lastDeviation <= 20 && currentMoveDelay <= 40))
                         currentMoveDelay--;
-                    else if(lastDeviation >= 40)
+                    else if((lastDeviation >= 50 && currentMoveDelay >= 40) || (lastDeviation > 40 && currentMoveDelay <= 40))
                         currentMoveDelay++;
 
                 } catch (InterruptedException e) {
