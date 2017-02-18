@@ -1,9 +1,9 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/lumber-bot.svg?branch=master)](https://travis-ci.org/timvisee/lumber-bot)
 
 # Lumber Bot
-Bot for the Lumber game.
+Bot for the LumberJack game in Telegram.
 
-This readme page will be updated soon, with usage description and a binary.
+![Lumber Jack cover](res/LumberJackCover.jpg)
 
 ## Bot usage
 * Run the bot.
